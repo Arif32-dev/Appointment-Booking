@@ -14,14 +14,14 @@
     }
     public static function cpt_create($attr)
     {
-        echo '
-            <form action="" >
+        ?>
+            <form action="" id="ab_plugin">
                  <div>
                     <strong>
                         <label for="p_name">Patient Name :</label>
                     </strong>
                     <br/>
-                    <input type="text" value="" name="p_name" id="p_name" placeholder="Enter your name" >
+                    <input required type="text" value="" name="p_name" id="p_name" placeholder="Enter your name" >
                 </div>
                 <br/>
 
@@ -30,7 +30,7 @@
                         <label for="p_phone">Patient Phone :</label>
                     </strong>
                     <br/>
-                    <input type="text" value="" name="p_phone" id="p_phone" placeholder="Enter your phone" >
+                    <input required type="text" value="" name="p_phone" id="p_phone" placeholder="Enter your phone" >
                 </div>
                 <br/>
                 
@@ -39,7 +39,7 @@
                         <label for="p_email">Patient Email :</label>
                     </strong>
                     <br/>
-                    <input type="email" value="" name="p_email" id="p_email">
+                    <input required type="email" value="" name="p_email" id="p_email" placeholder="Enter your name">
                 </div>
                 <br/>
 
@@ -48,12 +48,55 @@
                         <label for="p_address">Patient Address :</label>
                     </strong>
                     <br/>
-                    <textarea rows="3" cols="30" name="p_address" id="p_address"></textarea>
+                    <textarea required rows="3" cols="30" name="p_address" id="p_address" placeholder="Enter your address"></textarea>
                 </div>
                 <br/>
 
+                <div>
+                    <strong>
+                        <label for="p_disease">Type Of Disease :</label>
+                    </strong>
+                    <br/>
+                    <select required name="p_disease" id="p_disease">
+					<option selected disabled hidden>Choose Disease</option>
+                        <?php self::disease_types() ?>
+                    </select>
+                </div>
+                <br/>
+
+                  <div id="doctor_field">
+                  </div>
+                <br/>
+
+                <div>
+                    <strong>
+                        <label for="p_date">Appointment Date :</label>
+                    </strong>
+                    <br/>
+                    <input required type="date" value="" name="p_email" id="p_email">
+                </div>
+                <br/>
+
+                <input type="submit" value="Get Appointment" name="p_submit" id="p_submit">
             </form>
-        ';
+        <?php
+    }
+    public static function disease_types()
+    {
+        $disease_tax = get_terms(
+			[
+				'taxonomy' => 'typeofdisease',
+				'hide_empty' => false,
+			]
+        );
+        if($disease_tax && !is_wp_error( $disease_tax )){
+            foreach ($disease_tax as $disease) {
+                
+                ?>
+                    <option value="<?php echo esc_attr($disease->term_id) ?>"><?php echo esc_attr($disease->name) ?></option>
+                <?php
+			}
+        }
     }
  }
  new CPT_Creator;

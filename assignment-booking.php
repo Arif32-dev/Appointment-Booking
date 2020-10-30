@@ -105,6 +105,8 @@ class AB_Initializer
         require_once BASE_PATH . 'Includes/Admin/cpt_column_field.php';
         require_once BASE_PATH . 'Includes/Templates/cpt_creator.php';
         require_once BASE_PATH . 'Includes/Admin/taxonomy_column_field.php';
+        require_once BASE_PATH . 'Includes/Classes/enqeue_files.php';
+        require_once BASE_PATH . 'Includes/Classes/ab-ajax.php';
     }
 }
 new AB_Initializer;
