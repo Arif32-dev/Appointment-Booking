@@ -103,6 +103,8 @@ class AB_Initializer
         require_once BASE_PATH . 'Includes/Classes/Taxonomies/type_of_disease.php';
         require_once BASE_PATH . 'Includes/Classes/Meta/meta-field.php';
         require_once BASE_PATH . 'Includes/Admin/cpt_column_field.php';
+        require_once BASE_PATH . 'Includes/Templates/cpt_creator.php';
+        require_once BASE_PATH . 'Includes/Admin/taxonomy_column_field.php';
     }
 }
 new AB_Initializer;

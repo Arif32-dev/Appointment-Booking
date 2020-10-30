@@ -1,8 +1,13 @@
 <?php
-// Register Taxonomy Type of Disease
-function create_typeofdisease_tax() {
+class Disease_type {
+	public function __construct() {
+		add_action( 'init', [$this, 'create_typeofdisease_tax'] );
+		add_action('typeofdisease_add_form_fields', [$this, 'add_typeofdisease']);
 
-	$labels = array(
+	}
+	public function create_typeofdisease_tax()
+	{
+		$labels = array(
 		'name'              => _x( 'Type of Diseases', 'taxonomy general name', 'ab' ),
 		'singular_name'     => _x( 'Type of Disease', 'taxonomy singular name', 'ab' ),
 		'search_items'      => __( 'Search Type of Diseases', 'ab' ),
@@ -29,7 +34,38 @@ function create_typeofdisease_tax() {
 		'show_admin_column' => false,
 		'show_in_rest' => true,
 	);
-	register_taxonomy( 'typeofdisease', array('appointmentbooking'), $args );
-
+		register_taxonomy( 'typeofdisease', array('appointmentbooking'), $args );
+	}
+	public function add_typeofdisease($taxonomy_slug)
+	{
+		echo '
+			<div class="occupation">
+				<strong>
+					<label for="occupation_tax_meta">Doctor Required</label>
+				</strong>
+				<select name="profession" id="profession">
+					<option selected disabled hidden value="">Choose Professionals</option>
+					
+				</select>
+				<br>
+				<p class="description">Choose professional for this disease</p>
+				<br>
+				<br>
+			</div>
+		';
+	}
+	public static function professinals_occupation()
+	{
+		$doctor_tax = get_terms('doctor');
+	}
 }
-add_action( 'init', 'create_typeofdisease_tax' );
+// add_action('init', function(){
+
+	
+// // });
+// $terms = get_terms([
+//     'taxonomy' => 'doctor',
+//     'hide_empty' => false,
+// ]);
+// print_r($terms);
+new Disease_type;
