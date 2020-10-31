@@ -36,7 +36,7 @@ function create_appointmentbooking_cpt() {
 		'description' => __( 'Appointment Booking CPT', 'ab' ),
 		'labels' => $labels,
 		'menu_icon' => 'dashicons-calendar',
-		'supports' => array('title', 'editor', 'thumbnail'),
+		'supports' => array('title'),
 		'taxonomies' => array('doctor', 'type_of_disease'),
 		'public' => true,
 		'show_ui' => true,

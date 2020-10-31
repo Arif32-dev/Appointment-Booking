@@ -73,7 +73,7 @@
                         <label for="p_date">Appointment Date :</label>
                     </strong>
                     <br/>
-                    <input required type="date" value="" name="p_email" id="p_email">
+                    <input required type="date" value="" name="p_date" id="p_date">
                 </div>
                 <br/>
 

@@ -19,7 +19,7 @@ class Meta_Fields {
             'Appointment Details', 
             [get_called_class(), 'appoint_meta_content'],
             ['appointmentbooking'],
-            'side',
+            'normal',
             'high'
         );
     }
