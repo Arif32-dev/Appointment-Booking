@@ -41,6 +41,10 @@ class Ajax_req {
             wp_die();
         }
         parse_str($_POST['form_data'], $parsed_data);
+        
+        if ( !isset( $parsed_data['ab_cpt_nonce'] ) || !wp_verify_nonce( $parsed_data['ab_cpt_nonce'],  'ab_cpt_create_action') ){
+            wp_die();
+        }
         /* Field validation */
         if(
             (!isset($parsed_data['p_name']) && $parsed_data['p_name'] == "" ) ||

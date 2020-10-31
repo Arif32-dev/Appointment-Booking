@@ -16,6 +16,7 @@
     {
         ?>
             <form action="" id="ab_plugin">
+                <?php wp_nonce_field('ab_cpt_create_action', 'ab_cpt_nonce'); ?>
                  <div>
                     <strong>
                         <label for="p_name">Patient Name :</label>
@@ -39,7 +40,7 @@
                         <label for="p_email">Patient Email :</label>
                     </strong>
                     <br/>
-                    <input required type="email" value="" name="p_email" id="p_email" placeholder="Enter your name">
+                    <input required type="email" value="" name="p_email" id="p_email" placeholder="Enter your email">
                 </div>
                 <br/>
 

@@ -16,7 +16,7 @@
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Arifur Rahman Arif
- * Author URI:        https://www.facebook.com/profile.php?id=100023045749987
+ * Author URI:        http://hypercode.epizy.com/
  * Text Domain:      ab
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
