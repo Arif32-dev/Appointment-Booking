@@ -79,6 +79,7 @@ function submit_form($) {
 /* Get search result */
 function search_result($) {
     var form = $('#ab_search_form');
+    var search_result_area = $('#ab_search_result');
     form.on('submit', function (e) {
         e.preventDefault();
         var form_data = $(this).serialize();
@@ -90,7 +91,11 @@ function search_result($) {
             },
             type: 'post',
             success: res => {
-                console.log(res);
+                if (res == 'wrong') {
+                    alert('Something went wrong');
+                } else {
+                    search_result_area.html(res);
+                }
             },
             error: err => {
                 alert('Something went wrong');

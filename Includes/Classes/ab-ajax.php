@@ -100,8 +100,143 @@ class Ajax_req {
         if($_POST['action'] != 'ab_form_search'){
             wp_die();
         }
-        print_r($_POST);
+        parse_str($_POST['form_data'], $parsed_data);
+
+        if ( !isset( $parsed_data['ab_search_nonce'] ) || !wp_verify_nonce( $parsed_data['ab_search_nonce'],  'ab_search_nonce_action') ){
+            wp_die();
+        }
+        $sanitzed_parsed_data = [
+                's_appointment' => sanitize_text_field($parsed_data['s_appointment']),
+            ];
+        self::search_result($sanitzed_parsed_data);
+    }
+
+    public static function search_result(array $sanitzed_parsed_data)
+    {
+        $query = null;
+         $terms = get_terms([
+            'taxonomy' => ['doctor', 'typeofdisease'],
+            'search' =>  $sanitzed_parsed_data['s_appointment']
+        ]);
+
+        $tax_array = [];
+
+        if($terms){
+            foreach ($terms as $term) {
+                $tax_array[] = $term->term_id;
+            }
+        }
+        if(self::result_by_tax_query($tax_array)->posts){
+            $query = self::result_by_tax_query($tax_array)->posts;
+        }
+        elseif (self::result_by_meta_query($sanitzed_parsed_data)->posts) {
+           $query = self::result_by_meta_query($sanitzed_parsed_data)->posts;
+        }
+        elseif (self::result_by_post_name($sanitzed_parsed_data)->posts) {
+            $query = self::result_by_post_name($sanitzed_parsed_data)->posts; 
+        }
+        if($query){
+            self::outputHtml($query);
+        }else{
+            echo 'wrong';
+        }
         wp_die();
     }
+    public static function result_by_tax_query(array $tax_array)
+    {
+        if($tax_array){
+            $result_by_tax_query = new WP_Query(
+                 [
+                     'post_type' => 'appointmentbooking',
+                     'posts_per_page' => -1,
+                     'tax_query' => [
+                         'relation' => 'OR',
+                         [
+                             'taxonomy' => 'doctor',
+                             'field' => 'term_id', 
+                             'terms' => $tax_array
+                         ],
+                         [
+                             'taxonomy' => 'typeofdisease',
+                             'field' => 'term_id', 
+                             'terms' => $tax_array
+                         ]
+                     ]
+                 ]
+             );
+            return $result_by_tax_query;
+        }
+    }
+    public static function result_by_meta_query(array $sanitzed_parsed_data)
+    {
+          $result_by_meta_query = new WP_Query(
+                [
+                    'post_type' => 'appointmentbooking',
+                    'posts_per_page' => -1,
+                    'meta_value' => $sanitzed_parsed_data['s_appointment'],
+                    'meta_compare' => 'LIKE'
+                ]
+            );
+            return $result_by_meta_query;
+    }
+    public static function result_by_post_name(array $sanitzed_parsed_data)
+    {
+        $result_by_post_name = new WP_Query(
+            [
+                'post_type' => 'appointmentbooking',
+                'posts_per_page' => -1,
+                's' => $sanitzed_parsed_data['s_appointment'],
+            ]
+        );
+        return $result_by_post_name;
+    }
+    public static function outputHtml(array $query)
+    {
+       if($query){
+           foreach ($query as $res) {
+               ?>
+                    <div class="p_details">
+                            <div>
+                                <span>Patient Name : <?php echo sanitize_text_field($res->post_title) ?></span>
+                            </div>
+                            <div>
+                                <span>Patient Phone : <?php echo sanitize_text_field(get_post_meta( $res->ID, '_phone_value_key', true )) ?></span>
+                            </div>
+                            <div>
+                                <span>Patient Email : <?php echo sanitize_text_field(get_post_meta( $res->ID, '_email_value_key', true )) ?></span>
+                            </div>
+                            <div>
+                                <span>Patient Address : <?php echo sanitize_text_field(get_post_meta( $res->ID, '_address_value_key', true )) ?></span>
+                            </div>
+                            <div>
+                                <span>Patient Disease : <?php echo sanitize_text_field(self::patient_taxonomies($res->ID)[1]) ?></span>
+                            </div>
+                            <div>
+                                <span>Required Doctor : <?php echo sanitize_text_field(self::patient_taxonomies($res->ID)[0]) ?></span>
+                            </div>
+                            <div>
+                                <span>Appointment Date : <input type="date" value="<?php echo sanitize_text_field(get_post_meta( $res->ID, '_date_value_key', true )) ?>"></span>
+                            </div>
+                    </div>
+                    <br>
+                    <br>
+               <?php
+           }
+       }
+    }
+    public static function patient_taxonomies(int $post_id)
+    {
+        $terms = wp_get_post_terms($post_id, 
+            [
+                'doctor',
+                'typeofdisease'
+            ],
+            [
+                'fields' => 'names'
+            ]
+        );
+        return $terms;
+    }
+    
 }
 new Ajax_req;
