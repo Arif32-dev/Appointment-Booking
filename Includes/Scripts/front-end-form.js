@@ -91,6 +91,7 @@ function search_result($) {
             },
             type: 'post',
             success: res => {
+                console.log(res)
                 if (res == 'wrong') {
                     alert('Something went wrong');
                 } else {

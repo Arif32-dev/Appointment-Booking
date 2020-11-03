@@ -130,14 +130,14 @@ class Ajax_req {
                 $tax_array[] = $term->term_id;
             }
         }
-        if(self::result_by_tax_query($tax_array)->posts){
-            $query = self::result_by_tax_query($tax_array)->posts;
+        if(self::result_by_tax_query($tax_array)){
+            $query = self::result_by_tax_query($tax_array);
         }
-        elseif (self::result_by_meta_query($sanitzed_parsed_data)->posts) {
-           $query = self::result_by_meta_query($sanitzed_parsed_data)->posts;
+        elseif (self::result_by_meta_query($sanitzed_parsed_data)) {
+           $query = self::result_by_meta_query($sanitzed_parsed_data);
         }
-        elseif (self::result_by_post_name($sanitzed_parsed_data)->posts) {
-            $query = self::result_by_post_name($sanitzed_parsed_data)->posts; 
+        elseif (self::result_by_post_name($sanitzed_parsed_data)) {
+            $query = self::result_by_post_name($sanitzed_parsed_data);
         }
         if($query){
             self::outputHtml($query);
@@ -149,7 +149,7 @@ class Ajax_req {
     public static function result_by_tax_query(array $tax_array)
     {
         if($tax_array){
-            $result_by_tax_query = new WP_Query(
+            $result_by_tax_query = get_posts(
                  [
                      'post_type' => 'appointmentbooking',
                      'posts_per_page' => -1,
@@ -173,7 +173,7 @@ class Ajax_req {
     }
     public static function result_by_meta_query(array $sanitzed_parsed_data)
     {
-          $result_by_meta_query = new WP_Query(
+          $result_by_meta_query = get_posts(
                 [
                     'post_type' => 'appointmentbooking',
                     'posts_per_page' => -1,
@@ -185,18 +185,23 @@ class Ajax_req {
     }
     public static function result_by_post_name(array $sanitzed_parsed_data)
     {
-        $result_by_post_name = new WP_Query(
-            [
-                'post_type' => 'appointmentbooking',
-                'posts_per_page' => -1,
-                's' => $sanitzed_parsed_data['s_appointment'],
-            ]
-        );
-        return $result_by_post_name;
+        $all_strings = explode(" ", $sanitzed_parsed_data['s_appointment']);
+        if($all_strings){
+            foreach ($all_strings as $string) {
+
+                global $wpdb;
+                $table = $wpdb->prefix . 'posts';
+                $result_by_post_name = $wpdb->get_results("SELECT * FROM   " . $table . " WHERE post_type='appointmentbooking' AND post_title LIKE '%". $string ."%'");
+                if($result_by_post_name)
+                    return $result_by_post_name;
+                else 
+                    continue;
+            }
+        }
     }
     public static function outputHtml(array $query)
     {
-       if($query){
+      if($query){
            foreach ($query as $res) {
                ?>
                     <div class="p_details">
